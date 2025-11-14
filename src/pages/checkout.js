@@ -127,7 +127,7 @@ const Checkout = () => {
                           )}
                           name="email"
                           type="email"
-                          readOnly={true}
+                          readOnly={false}
                           placeholder="youremail@gmail.com"
                         />
                         <Error errorName={errors.email} />
