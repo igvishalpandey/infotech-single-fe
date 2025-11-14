@@ -61,14 +61,32 @@ const RecursiveList = ({ items, translate, router }) => {
   );
 };
 
-const CategorySidebar = () => {
+const CategorySidebar = ({ onPriceRangeChange, priceRange }) => {
   const router = useRouter();
   const { showingTranslateValue } = useUtilsFunction();
+  const [localPriceRange, setLocalPriceRange] = useState(
+    priceRange || [0, 1000]
+  );
 
   const { data, isLoading, error } = useQuery({
     queryKey: ["category"],
     queryFn: async () => await CategoryServices.getShowingCategory(),
   });
+
+  const handlePriceChange = (index, value) => {
+    const newRange = [...localPriceRange];
+    newRange[index] = parseInt(value);
+
+    // Ensure min <= max
+    if (index === 0 && newRange[0] > newRange[1]) {
+      newRange[1] = newRange[0];
+    } else if (index === 1 && newRange[1] < newRange[0]) {
+      newRange[0] = newRange[1];
+    }
+
+    setLocalPriceRange(newRange);
+    onPriceRangeChange(newRange);
+  };
 
   if (isLoading) return <Loading loading={isLoading} />;
   if (error) return null;
@@ -78,6 +96,87 @@ const CategorySidebar = () => {
   return (
     <aside className="hidden md:block w-64 h-screen overflow-y-auto border-r bg-white px-4 py-6 sticky top-0 scrollbar-hide">
       <h3 className="text-base font-semibold mb-4">Categories</h3>
+
+      {/* Price Range Slider Filter */}
+      <div className="mb-6 p-4 border rounded-lg bg-gray-50">
+        <h4 className="text-sm font-semibold mb-3">Price Range</h4>
+
+        {/* Price Inputs */}
+        <div className="flex gap-2 mb-3">
+          <div className="flex-1">
+            <label className="text-xs text-gray-600">Min</label>
+            <input
+              type="number"
+              value={localPriceRange[0]}
+              onChange={(e) => handlePriceChange(0, e.target.value)}
+              className="w-full p-1 text-sm border rounded"
+              min="0"
+              max="1000"
+            />
+          </div>
+          <div className="flex-1">
+            <label className="text-xs text-gray-600">Max</label>
+            <input
+              type="number"
+              value={localPriceRange[1]}
+              onChange={(e) => handlePriceChange(1, e.target.value)}
+              className="w-full p-1 text-sm border rounded"
+              min="0"
+              max="1000"
+            />
+          </div>
+        </div>
+
+        <div className="relative pt-6">
+          <div className="relative h-2">
+            <div className="absolute w-full h-1 bg-leather-border-light rounded-full"></div>
+
+            <div
+              className="absolute h-1 bg-leather-brown rounded-full"
+              style={{
+                left: `${(localPriceRange[0] / 1000) * 100}%`,
+                width: `${
+                  ((localPriceRange[1] - localPriceRange[0]) / 1000) * 100
+                }%`,
+              }}
+            ></div>
+
+            <input
+              type="range"
+              min="0"
+              max="1000"
+              value={localPriceRange[0]}
+              onChange={(e) => handlePriceChange(0, e.target.value)}
+              className="absolute w-full h-1 opacity-0 cursor-pointer z-20"
+            />
+
+            <input
+              type="range"
+              min="0"
+              max="1000"
+              value={localPriceRange[1]}
+              onChange={(e) => handlePriceChange(1, e.target.value)}
+              className="absolute w-full h-1 opacity-0 cursor-pointer z-20"
+            />
+
+            <div
+              className="absolute w-4 h-4 bg-leather-brown rounded-full border-2 border-leather-white shadow-leather z-10 transform -translate-y-1.5 -translate-x-2"
+              style={{ left: `${(localPriceRange[0] / 1000) * 100}%` }}
+            ></div>
+
+            <div
+              className="absolute w-4 h-4 bg-leather-brown rounded-full border-2 border-leather-white shadow-leather z-10 transform -translate-y-1.5 -translate-x-2"
+              style={{ left: `${(localPriceRange[1] / 1000) * 100}%` }}
+            ></div>
+          </div>
+
+          <div className="flex justify-between text-xs text-leather-charcoal-600 mt-4">
+            <span className="font-medium">{localPriceRange[0]}</span>
+            <span className="font-medium">{localPriceRange[1]}</span>
+          </div>
+        </div>
+      </div>
+
       <RecursiveList
         items={categories}
         translate={showingTranslateValue}

@@ -16,16 +16,27 @@ const Search = ({ products, attributes }) => {
   const { t } = useTranslation();
   const { isLoading, setIsLoading } = useContext(SidebarContext);
   const [visibleProduct, setVisibleProduct] = useState(18);
-  const { setSortedField, productData } = useFilter(products);
+  const [priceRange, setPriceRange] = useState([0, 1000]); // Add price range state
+
+  // Pass priceRange to useFilter hook
+  const { setSortedField, productData } = useFilter(products, priceRange);
 
   useEffect(() => {
     setIsLoading(false);
   }, [products]);
 
+  const handlePriceRangeChange = (newRange) => {
+    setPriceRange(newRange);
+  };
+
   return (
     <Layout title="Search" description="This is search page">
       <div className="flex">
-        <CategorySidebar />
+        {/* Pass price range props to CategorySidebar */}
+        <CategorySidebar
+          onPriceRangeChange={handlePriceRangeChange}
+          priceRange={priceRange}
+        />
 
         <div className="flex-1 max-w-screen-2xl mx-auto px-3 sm:px-10 py-10">
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 2xl:gap-6 mb-6">
@@ -33,12 +44,17 @@ const Search = ({ products, attributes }) => {
           </div>
 
           {productData?.length > 0 && (
-            <div className="flex justify-between items-center bg-leather-cream-100 border border-leather-border rounded-leather p-3 mb-6">
-              <h6 className="text-sm font-serif text-leather-charcoal-700">
-                {productData.length} products found
-              </h6>
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-leather-cream-100 border border-leather-border rounded-leather p-3 mb-6">
+              <div>
+                <h6 className="text-sm font-serif text-leather-charcoal-700">
+                  {productData.length} products found
+                </h6>
+                <p className="text-xs text-leather-charcoal-500 mt-1">
+                  Price range: {priceRange[0]} - {priceRange[1]}
+                </p>
+              </div>
 
-              <select
+              {/* <select
                 onChange={(e) => setSortedField(e.target.value)}
                 className="text-sm font-serif font-medium bg-leather-white rounded-leather border border-leather-border px-3 py-2 cursor-pointer focus:ring-0 focus:border-leather-brown focus:outline-none text-leather-charcoal-700"
               >
@@ -47,7 +63,7 @@ const Search = ({ products, attributes }) => {
                 </option>
                 <option value="Low">{t("common:lowToHigh")}</option>
                 <option value="High">{t("common:highToLow")}</option>
-              </select>
+              </select> */}
             </div>
           )}
 
@@ -65,6 +81,10 @@ const Search = ({ products, attributes }) => {
                   <h2 className="text-lg md:text-xl font-medium text-leather-charcoal-600">
                     {t("common:sorryText")} 😞
                   </h2>
+                  <p className="text-sm text-leather-charcoal-500 mt-2">
+                    No products found in the price range ${priceRange[0]} - $
+                    {priceRange[1]}
+                  </p>
                 </div>
               ) : (
                 <>
