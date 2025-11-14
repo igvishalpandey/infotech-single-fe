@@ -21,14 +21,14 @@ const Cart = () => {
       return;
     }
 
-    //TODO: Fix this
-    // if (!userInfo) {
-    //   router.push(`/auth/login?redirectUrl=checkout`);
-    //   closeCartDrawer();
-    // } else {
+
+    if (!userInfo) {
+      router.push(`/auth/login?redirectUrl=checkout`);
+      closeCartDrawer();
+    } else {
       router.push("/checkout");
       closeCartDrawer();
-    // }
+    }
   };
 
   const handleContinueShopping = () => {
