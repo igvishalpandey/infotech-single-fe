@@ -97,11 +97,14 @@ const CategorySidebar = ({ onPriceRangeChange, priceRange }) => {
     <aside className="hidden md:block w-64 h-screen overflow-y-auto border-r bg-white px-4 py-6 sticky top-0 scrollbar-hide">
       <h3 className="text-base font-semibold mb-4">Categories</h3>
 
-      {/* Price Range Slider Filter */}
-      <div className="mb-6 p-4 border rounded-lg bg-gray-50">
+      <RecursiveList
+        items={categories}
+        translate={showingTranslateValue}
+        router={router}
+      />
+      <div className="mb-6 p-4 border rounded-lg bg-gray-50 my-2 mt-6">
         <h4 className="text-sm font-semibold mb-3">Price Range</h4>
 
-        {/* Price Inputs */}
         <div className="flex gap-2 mb-3">
           <div className="flex-1">
             <label className="text-xs text-gray-600">Min</label>
@@ -176,12 +179,6 @@ const CategorySidebar = ({ onPriceRangeChange, priceRange }) => {
           </div>
         </div>
       </div>
-
-      <RecursiveList
-        items={categories}
-        translate={showingTranslateValue}
-        router={router}
-      />
     </aside>
   );
 };

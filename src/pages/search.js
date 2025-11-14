@@ -54,7 +54,7 @@ const Search = ({ products, attributes }) => {
                 </p>
               </div>
 
-              {/* <select
+              <select
                 onChange={(e) => setSortedField(e.target.value)}
                 className="text-sm font-serif font-medium bg-leather-white rounded-leather border border-leather-border px-3 py-2 cursor-pointer focus:ring-0 focus:border-leather-brown focus:outline-none text-leather-charcoal-700"
               >
@@ -63,7 +63,7 @@ const Search = ({ products, attributes }) => {
                 </option>
                 <option value="Low">{t("common:lowToHigh")}</option>
                 <option value="High">{t("common:highToLow")}</option>
-              </select> */}
+              </select>
             </div>
           )}
 
